@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Calculadora con Historial</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fdf6f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .calculator {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 320px;
+      width: 100%;
+      border: 2px solid #f7d1d1;
+    }
+
+    h2, h3 {
+      color: #a94442;
+      text-align: center;
+    }
+
+    input[type="number"] {
+      width: 93%;
+      padding: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      border: 2px solid #cfd8dc;
+      border-radius: 8px;
+      background-color: #fce4ec;
+    }
+
+    select  {
+      width: 101%;
+      padding: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      border: 2px solid #cfd8dc;
+      border-radius: 8px;
+      background-color: #fce4ec;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-op {
+      background-color: #aec6cf;
+      color: #003366;
+    }
+
+    .btn-op:hover {
+      background-color: #9bb4c0;
+    }
+
+    .btn-secondary {
+      background-color: #ffcccb;
+      color: #800000;
+    }
+
+    .btn-secondary:hover {
+      background-color: #fbb;
+    }
+
+    .btn-clear {
+      background-color: #d98880;
+      color: white;
+    }
+
+    .btn-clear:hover {
+      background-color: #c66;
+    }
+
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #444;
+      text-align: center;
+    }
+
+    .history {
+      max-height: 150px;
+      overflow-y: auto;
+      background: #fbeaea;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #f5b7b1;
+    }
+
+    .history p {
+      margin: 5px 0;
+      color: #5d6d7e;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h2>Calculadora</h2>
+    <input type="number" id="num1" placeholder="Número 1">
+     <select id="operador">
+      <option value="+">+</option>
+      <option value="-">−</option>
+      <option value="*">×</option>
+      <option value="/">÷</option>
+    </select>
+    <input type="number" id="num2" placeholder="Número 2">
+    
+    <button class="btn-op" onclick="calcular()">=</button>
+    <button class="btn-secondary" onclick="limpiarCampos()">Limpiar</button>
+    <div class="result" id="resultado"></div>
+    
+    <h3>Historial</h3>
+    <div class="history" id="historial"></div>
+<button class="btn-clear" onclick="borrarHistorial()">Borrar Historial</button>
+  </div>
+<footer><p>(C) Roils Velazquez 20230649</p></footer>
+  <script>
+    function calcular() {
+      var num1 = parseFloat(document.getElementById('num1').value);
+      var num2 = parseFloat(document.getElementById('num2').value);
+      var operador = document.getElementById('operador').value;
+      var resultado;
+
+      if (isNaN(num1) || isNaN(num2)) {
+        alert('Por favor ingrese ambos números.');
+        return;
+      }
+
+      switch (operador) {
+        case '+': resultado = num1 + num2; break;
+        case '-': resultado = num1 - num2; break;
+        case '*': resultado = num1 * num2; break;
+        case '/':
+          if (num2 === 0) {
+            alert('No se puede dividir por cero.');
+            return;
+          }
+          resultado = num1 / num2;
+          break;
+      }
+
+      var operacion = num1 + ' ' + operador + ' ' + num2 + ' = ' + resultado;
+      document.getElementById('resultado').innerText = 'Resultado: ' + resultado;
+      guardarEnHistorial(operacion);
+    }
+
+    function limpiarCampos() {
+      document.getElementById('num1').value = '';
+      document.getElementById('num2').value = '';
+      document.getElementById('resultado').innerText = '';
+    }
+
+    function guardarEnHistorial(operacion) {
+      var historial = JSON.parse(localStorage.getItem('historial')) || [];
+      historial.push(operacion);
+      localStorage.setItem('historial', JSON.stringify(historial));
+      mostrarHistorial();
+    }
+
+    function mostrarHistorial() {
+      var historial = JSON.parse(localStorage.getItem('historial')) || [];
+      var historialDiv = document.getElementById('historial');
+      historialDiv.innerHTML = '';
+      for (var i = 0; i < historial.length; i++) {
+        var p = document.createElement('p');
+        p.textContent = historial[i];
+        historialDiv.appendChild(p);
+      }
+    }
+
+    function borrarHistorial() {
+      localStorage.removeItem('historial');
+      mostrarHistorial();
+    }
+
+    mostrarHistorial();
+  </script>
+</body>
+</html>
